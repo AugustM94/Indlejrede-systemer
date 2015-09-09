@@ -32,11 +32,11 @@ int squaring(int x){
 	return fValue;
 }
 
-int MWI(int[] xN){
+int MWI(int[] xN) {
 	int N = sizeOf(xN);
 	int fValue;
 
-
+//test comment
 
 	return fValue;
 }
