@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include "sensor.h"
 
-int getNextData(){
+int getNextData(FILE *file){
 	// Implement me according to the Assignment 1 manual
-	return 0;
+
+	int value;
+
+	fscanf(file,"%i",&value);
+
+	return value;
 }
