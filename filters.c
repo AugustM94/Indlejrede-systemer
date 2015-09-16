@@ -32,12 +32,17 @@ int squaring(int x){
 	return fValue;
 }
 
-int MWI(int[] xN) {
-	int N = sizeOf(xN);
+
+int MWI(int xN[]){
+	int N = sizeof(xN)/sizeof(xN[0]);
+	int sum = 0;
 	int fValue;
 
-//test comment
+	for(int i = 0; i < N;i++){
+		sum += xN[i];
+	}
 
+	fValue = (1/N)*sum;
 	return fValue;
 }
 
