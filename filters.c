@@ -11,7 +11,7 @@ int lowPass(int x, int x6, int x12, int y1, int y2){
 int highPass(int x, int x16, int x17, int x32, int y1){
 	int fValue;
 
-	fValue = y1-(x/32)+x16-x17+((x32)/32);
+	fValue = y1-(x/32)+x16-x17+(x32/32);
 
 	return fValue;
 }
@@ -19,7 +19,7 @@ int highPass(int x, int x16, int x17, int x32, int y1){
 int derivative(int x, int x1, int x3, int x4){
 	int fValue;
 
-	fValue = (1/8)*(2*x+x1-x3-2*x4);
+	fValue = (2*x+x1-x3-2*x4)/8;
 
 	return fValue;
 }
