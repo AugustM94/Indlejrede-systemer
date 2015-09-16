@@ -3,7 +3,7 @@
 int lowPass(int x, int x6, int x12, int y1, int y2){
 	int fValue;
 
-	fValue = 2*y1-y2+(1/32)*(x-2*x6+x12);
+	fValue = 2*y1-y2+(x-2*x6+x12)/32;
 
 	return fValue;
 }
