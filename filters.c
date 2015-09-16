@@ -11,7 +11,7 @@ int lowPass(int x, int x6, int x12, int y1, int y2){
 int highPass(int x, int x16, int x17, int x32, int y1){
 	int fValue;
 
-	fValue = y1-(x/32)+x16-x17+((x-32)/32);
+	fValue = y1-(x/32)+x16-x17+((x32)/32);
 
 	return fValue;
 }
