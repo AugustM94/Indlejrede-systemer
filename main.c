@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+//This is a test comment to check if commits works properly... GG
+
 int main(){
 	static const char filename[] = "ECG.txt";
 	FILE *file = fopen(filename,"r"); //Reads file into variable file.
