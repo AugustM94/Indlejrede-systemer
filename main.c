@@ -23,6 +23,11 @@ int main(){
 	int fValueDerivative = 0;
 	int filteredDerivative[33] = {0};
 
+	int valueSquared = 0;
+	int valuesSqaured[30] = {0};
+
+	int MWIValue = 0;
+
 	while(i < 100){
 		value = getNextData(file);
 		a[i%33] = value;
@@ -61,7 +66,16 @@ int main(){
 		);
 		filteredDerivative[i%33] = fValueDerivative;
 
-	    printf("i: %d value: fValueDerivative: %d \n",i,fValueDerivative);
+	    //printf("i: %d value: fValueDerivative: %d \n",i,fValueDerivative);
+
+		//Squared
+		valueSquared = squaring(fValueDerivative);
+		valuesSqaured[i%30] = valueSquared;
+
+		//MWI filter
+		MWIValue = MWI(valuesSqaured);
+		printf("%d\n", MWIValue);
+
 
 		//usleep(4*1000); // This only works for unix systems.
 

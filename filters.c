@@ -34,7 +34,7 @@ int squaring(int x){
 
 
 int MWI(int xN[]){
-	int N = sizeof(xN)/sizeof(xN[0]);
+	int N = 30;
 	int sum = 0;
 	int fValue;
 
@@ -42,7 +42,7 @@ int MWI(int xN[]){
 		sum += xN[i];
 	}
 
-	fValue = (1/N)*sum;
+	fValue = sum/N;
 	return fValue;
 }
 
