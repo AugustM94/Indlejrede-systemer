@@ -49,6 +49,8 @@ int main() {
 	int rrAverage1Pointer = 0;
 
 	//RR High, low and miss
+	int RR_CURRENT = 0; //Used for interval calculation.
+	int RR_LAST = 0;	//Used for interval calculation.
 	int RR_LOW = 0;
 	int RR_HIGH = 1000;
 	int RR_MISS = 0;
@@ -57,11 +59,9 @@ int main() {
 		value = getNextData(file);
 		a[i % 33] = value;
 
-		//printf("data = %d : %d\n",value,-((i-6)>-1) & a[(i-6)%32]);
 		// Low pass filter
 		fValueLow = lowPass(a[i % 33], -((i - 6) > -1) & a[(i - 6) % 33],
 				-((i - 12) > -1) & a[(i - 12) % 33], lowY1, lowY2);
-		//printf("i: %d value: %d\n",i, fValueLow);
 
 		lowY2 = lowY1;
 		lowY1 = fValueLow;
@@ -75,8 +75,6 @@ int main() {
 				-((i - 32) > -1) & filteredLow[(i - 32) % 33], fValueHigh);
 
 		filteredHigh[i % 33] = fValueHigh;
-		//printf("i: %d value: %d\n",i, fValueHigh);
-		//printf("i: %d fValueHigh: %d %d\n",i%33,filteredLow[(i+1)%33], filteredLow[i%33]);
 
 		// Derivative filter
 		fValueDerivative = derivative(filteredHigh[i % 33],
@@ -111,12 +109,15 @@ int main() {
 
 			// Peak > THRESHOLD1?
 			if (newPeak <= THRESHOLD1) { // is peak below the threshold
-				NPKF = newPeak/8 + NPKF/8;
+				NPKF = newPeak/8 + (7*NPKF)/8;
 				THRESHOLD1 = NPKF +(SPKF - NPKF)/4;
 				THRESHOLD2 = THRESHOLD1 / 2;
 			} else { // is peak above the threshold
 				//Calculate RR value
-				RR = i - (-((rrAverage2Pointer - 1) > -1) & rrAverage2[(rrAverage2Pointer - 1) % 8]);
+				//RR = i - (-((rrAverage2Pointer) > -1) & rrAverage2[(rrAverage2Pointer) % 8]);
+				RR_CURRENT = i;
+				RR = RR_CURRENT - RR_LAST;
+				RR_LAST = RR_CURRENT;
 
 				if(RR_LOW < RR && RR < RR_HIGH){
 					//update recent RR arrays.
@@ -140,7 +141,6 @@ int main() {
 					rrAverage2Pointer++;
 					rrAverage1Pointer++;
 				} else {
-					printf("RR: %d, RR_MISS: %d\n", RR, RR_MISS);
 					if(RR > RR_MISS){
 						for(int i = peaksPointer; i > 0; i--){
 							if(peaks[i] > THRESHOLD2){
@@ -171,10 +171,6 @@ int main() {
 
 		i++;
 	}
-/*
-	for (int i = 0; i < 200; i++) {
-	//	printf("%d\n", peaks[i]);
-	}*/
 	return 0;
 }
 
