@@ -33,6 +33,7 @@ int main() {
 	//Peak detection variables
 	int tempFindPeak[3] = { 0 }; //Saves the 3 most recent values that have passed all filters.
 	int peaks[5000];
+	int peakIndex[5000];
 	int rPeaks[8];
 	int peaksPointer = 0;
 	int THRESHOLD1 = 0;
@@ -101,34 +102,39 @@ int main() {
 				> (-((i - 2) > -1) & tempFindPeak[(i - 2) % 3])
 				&& (-((i - 1) > -1) & tempFindPeak[(i - 1) % 3])
 						> tempFindPeak[i % 3]) {
-			//printf("i = %d : %d : %d : %d ",i,tempFindPeak[(i-2)%3],tempFindPeak[(i-1)%3],tempFindPeak[i%3]);
+			//printf("i = %d : %d : %d : %d \n",i,tempFindPeak[(i-2)%3],tempFindPeak[(i-1)%3],tempFindPeak[i%3]);
 			int newPeak = tempFindPeak[(i - 1) % 3];
 
 			//Adds peak to array of peaks.
 			peaks[peaksPointer] = newPeak;
+			peakIndex[peaksPointer] = i;
 			peaksPointer++;
 
+			printf("\n");
 			//printf("  THRESHOLD 1 : %d \n", THRESHOLD1);
 			// Peak > THRESHOLD1?
 			if (newPeak <= THRESHOLD1) { // is peak below the threshold
-				NPKF = 0.125 * newPeak + 0.875 * NPKF;
-				THRESHOLD1 = NPKF + 0.25 * (SPKF - NPKF);
+				printf("peak is BELOW threshold \n");
+				NPKF = newPeak/8 + NPKF/8;
+				THRESHOLD1 = NPKF +(SPKF - NPKF)/4;
 				THRESHOLD2 = THRESHOLD1 / 2;
 			} else { // is peak above the threshold
+				printf("peak is ABOVE threshold \n");
 				//Calculate RR value
 				RR = i - (-((rrAverage2Pointer - 1) > -1) & rrAverage2[(rrAverage2Pointer - 1) % 8]);
 
 				//printf("i %d :RA %d : RA-1 %d : RR = %d\n",i, rrAverage2[rrAverage2Pointer % 8],-((rrAverage2Pointer - 1) > -1) & rrAverage2[(rrAverage2Pointer - 1) % 8],RR);
 				//printf("low: %d, high: %d, miss: %d\n",RR_LOW,RR_HIGH,RR_MISS);
-				printf("%d , %d , %d\n ",RR_LOW, RR, RR_HIGH);
+				//printf("%d , %d , %d\n ",RR_LOW, RR, RR_HIGH);
 
 				if(RR_LOW < RR && RR < RR_HIGH){
+					printf("RR is between high and low %d\n",i);
 					//printf("i: %d RR: %d\n",i,RR);
 					//update recent RR arrays.
 					rrAverage2[rrAverage2Pointer % 8] = i;
 					rrAverage1[rrAverage1Pointer % 8] = i;
 					// update SPKF
-					SPKF = 0.125 * newPeak + 0.875 * SPKF;
+					SPKF = newPeak/8 + 7*SPKF/8;
 					//Store RR in recent RR
 
 					// update RR_HIGH, RR_LOW and RR_MISS
@@ -139,21 +145,23 @@ int main() {
 					//printf("low: %d, high: %d, miss: %d\n",RR_LOW,RR_HIGH,RR_MISS);
 
 					// update thresholds
-					THRESHOLD1 = NPKF + 0.25 * (SPKF-NPKF);
-					THRESHOLD2 = 0.5 * THRESHOLD1;
+					THRESHOLD1 = NPKF + (SPKF-NPKF)/4;
+					THRESHOLD2 = THRESHOLD1/2;
 
 					rrAverage2Pointer++;
 					rrAverage1Pointer++;
 				} else {
-					//printf("not between high and low: %d\n",RR);
+					printf("peak is NOT between high and low : %d\n",i);
+
 					if(RR > RR_MISS){
+						printf("RR is ABOVE RR_miss\n");
 						//printf("number of peaks: %d \n ", peaksPointer);
 
 						for(int i = peaksPointer; i > 0; i--){
-
 							if(peaks[i] > THRESHOLD2){
+								printf("found SEARCHBACK peak: %d\n", peakIndex[i]);
 								//printf("i: %d RR: %d\n",i,RR);
-								rrAverage1[rrAverage1Pointer % 8] = i;
+								rrAverage1[rrAverage1Pointer % 8] = peakIndex[i];
 								SPKF = peaks[i]/4 + (3* SPKF)/4;
 
 								int RR_average1 = average(rrAverage1);
@@ -164,7 +172,7 @@ int main() {
 								RR_MISS = 1.66 * RR_average1;
 
 								// update thresholds
-								THRESHOLD1 = NPKF + 0.25*(SPKF - NPKF);
+								THRESHOLD1 = NPKF + (SPKF - NPKF)/4;
 								THRESHOLD2 = THRESHOLD1/2;
 
 								rrAverage1Pointer++;
@@ -174,19 +182,16 @@ int main() {
 					}
 				}
 			}
-
 		}
-
-		//
 
 		//usleep(4*1000); // This only works for unix systems.
 
 		i++;
 	}
-
+/*
 	for (int i = 0; i < 200; i++) {
 	//	printf("%d\n", peaks[i]);
-	}
+	}*/
 	return 0;
 }
 
