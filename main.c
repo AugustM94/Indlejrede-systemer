@@ -40,8 +40,8 @@ int main() {
 	int peaksPointer = 0;
 	int THRESHOLD1 = 1875;
 	int THRESHOLD2 = 938;
-	int NPKF = 625;
-	int SPKF = 5000;
+	int NPKF = 1000;
+	int SPKF = 4500;
 
 	//RR average variables
 	int RR_Average1 = 0;
@@ -60,7 +60,7 @@ int main() {
 	int RR_MISS = 249;
 
 
-	while (i < 10000) {
+	while (i < fileLength) {
 		value = getNextData(file);
 		a[i % 33] = value;
 
@@ -112,11 +112,11 @@ int main() {
 			peaks[peaksPointer] = newPeak;
 			peakIndex[peaksPointer] = i-1;
 			peaksPointer++;
-			printf("\nPeak: %d index: %d \n",peaks[peaksPointer-1],i);
-			printf("\nThreshold1: %d\n",THRESHOLD1);
+			//printf("\nPeak: %d index: %d \n",peaks[peaksPointer-1],i);
+			//printf("\nThreshold1: %d\n",THRESHOLD1);
 			// Peak > THRESHOLD1?
 			if (newPeak <= THRESHOLD1) { // is peak below the threshold
-				printf("CASE 1\n");
+				//printf("CASE 1\n");
 				NPKF = newPeak/8 + (7*NPKF)/8;
 				THRESHOLD1 = NPKF +(SPKF - NPKF)/4;
 				THRESHOLD2 = THRESHOLD1 / 2;
@@ -125,17 +125,18 @@ int main() {
 				//RR = i - (-((rrAverage2Pointer) > -1) & RecentRR_OK[(rrAverage2Pointer) % 8]);
 
 				RR_CURRENT = i-1;
-				printf("RR_CURRENT = %d, RR_LAST = %d\n",RR_CURRENT, RR_LAST);
+				//printf("RR_CURRENT = %d, RR_LAST = %d\n",RR_CURRENT, RR_LAST);
 				RR = RR_CURRENT - RR_LAST;
 				//RR_LAST = RR_CURRENT;
 
-				printf("Calculating new RR = %d for i = %d\n ", RR, i);
+				//printf("Calculating new RR = %d for i = %d\n ", RR, i);
 				if(RR_LOW < RR && RR < RR_HIGH){
-					printf("CASE 2\n");
-					printf("New RR Peak found: RR_LOW = %d, RR = %d, RR_HIGH = %d\n",RR_LOW, RR, RR_HIGH);
+					//printf("CASE 2\n");
+					//printf("New RR Peak found: RR_LOW = %d, RR = %d, RR_HIGH = %d\n",RR_LOW, RR, RR_HIGH);
 					//Store peak in rPeaks
 					rPeaks[rPeaksPointer] = newPeak;
 					rPeaksPointer++;
+					printf("%d\n",i);
 					RR_LAST = newPeakIndex;
 
 					// update SPKF
@@ -158,14 +159,14 @@ int main() {
 					RR_MISS = 1.66 * RR_Average2;
 
 					// update thresholds
-					printf("NPKF = %d\n",NPKF);
+					//printf("NPKF = %d\n",NPKF);
 					THRESHOLD1 = NPKF + (SPKF-NPKF)/4;
 					THRESHOLD2 = THRESHOLD1/2;
 
 				} else {
 					if(RR > RR_MISS){
-						printf("CASE 4\n");
-						printf("RR = %d > RR_MISS = %d\n", RR, RR_MISS);
+						//printf("CASE 4\n");
+						//printf("RR = %d > RR_MISS = %d\n", RR, RR_MISS);
 						//Initialize searchback
 						for(int j = peaksPointer-1; j > -1; j--){
 							if(peaks[j] > THRESHOLD2){
@@ -173,12 +174,12 @@ int main() {
 								//Store peak in R peak
 								rPeaks[rPeaksPointer]= newRPeak;
 								rPeaksPointer++;
-
 								//SPKF update
 								SPKF = newRPeak/4 + (3*SPKF)/4;
 
 								//Store RR in RecentRR
 								RecentRR[RecentRRPointer % 8] = RR;
+								RR_LAST = newPeakIndex;
 
 								//Update average 1
 								RR_Average1 = average(RecentRR);
@@ -191,12 +192,13 @@ int main() {
 								//Update THRESHOLDS
 								THRESHOLD1 = NPKF + (SPKF-NPKF)/4;
 								THRESHOLD2 = THRESHOLD1/2;
-
-
+								printf("%d : CASE4\n",i);
 							}
+							break;
 						}
+
 					}else{
-						printf("CASE 3\n");
+						//printf("CASE 3\n");
 					}
 
 				}
@@ -207,8 +209,8 @@ int main() {
 		//usleep(4*1000); // This only works for unix systems.
 		i++;
 	}
-	for(int i = 0; i < 17; i++){
-		printf("%d\n",rPeaks[i]);
+	for(int i = 0; i < 50; i++){
+		//printf("%d\n",rPeaks[i]);
 	}
 
 	return 0;
